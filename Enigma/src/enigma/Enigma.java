@@ -99,7 +99,22 @@ public class Enigma implements stuff {
 	
 	public void setSteckerverbindung (char a, char b) throws Exception {
 		try {
-			steckerbrett.connect(a, b);
+			System.out.println("Setting Steckerverbindung (connection) between " + a + " and " + b + "...");
+			
+			switch (steckerbrett.connect(a, b)) {
+			case 1:
+				System.out.println ("Removed existing connection for " + a);
+				break;
+			case 2:
+				System.out.println ("Removed existing connection for " + b);
+				break;
+			case 3:
+				System.out.println ("Removed existing connection for " + a + " and " + b);
+				break;
+			default:
+				break;	
+			}
+			System.out.println("Connection set.");
 		}
 		catch (Exception e) {
 			throw new Exception ("Error setting Steckervervindung", e);

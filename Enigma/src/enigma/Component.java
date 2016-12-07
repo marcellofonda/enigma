@@ -79,8 +79,9 @@ public class Component implements stuff {
 	 * @see enigma.Component.wiring
 	 * @see enigma.Component.
 	 */
-	public void connect ( char c1, char c2 ) throws Exception {
+	public int connect ( char c1, char c2 ) throws Exception {
 		try {
+			int ret = 0;
 			int n1 = Character.toUpperCase(c1) - start;
 			int n2 = Character.toUpperCase(c2) - start;
 			
@@ -88,15 +89,19 @@ public class Component implements stuff {
 				throw OutOfRange;
 			int n = n1;
 			for (int i = 0; i < 2; i++) {
-				if (wiring[n] != n)
+				if (wiring[n] != n) {
 					wiring[wiring[n]] = wiring[n];
 					wiring[n] = n;
+					ret += i + 1;
+				}
 				n = n2;
+				
 			}
 			
 			wiring[n1] = n2;
 			wiring[n2] = n1;
 			
+			return ret;
 		} catch (Exception e) {
 			throw new Exception ( "Error while setting connection", e);
 		}
