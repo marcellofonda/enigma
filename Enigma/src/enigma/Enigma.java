@@ -3,27 +3,29 @@ package enigma;
 import java.util.Arrays;
 
 /**
- * The {@code ENIGMA Machine} is a 
+ * The {@code ENIGMA Machine} is a
  * @author Marcello Fonda
  *
  */
 public class Enigma implements stuff {
 	
+	private final int turning_disks;
 	private Component steckerbrett;
 	private Disk etw;
 	private Reflector[] ukws;
 	private Reflector used_ukw;
 	private Disk[] disks;
 	private Disk[] used_disks;
-	public boolean debugMode;
+	public static boolean debugMode;
 
-	public Enigma( int n, Component Ekw, Reflector[] Ukws, Disk[] disks, int diskn ) {
+	public Enigma( int letter_num, Component Ekw, Reflector[] Ukws, Disk[] disks, int disk_num, int turning_disks ) {
 		
-		this.steckerbrett = new Component(n);
+		this.steckerbrett = new Component(letter_num);
 		this.etw = new Disk(Ekw.getWiring(), "");
 		this.ukws = (Reflector[]) Reflector.copy(Ukws);
 		this.disks = Disk.copy(disks);
-		used_disks = new Disk[diskn];
+		used_disks = new Disk[disk_num];
+		this.turning_disks = turning_disks;
 		
 	}
 	
@@ -52,8 +54,15 @@ public class Enigma implements stuff {
 	 */
 	public void setWalzenlage (int... d) throws Exception {
 		try {
+			// FINISH!
+			System.out.print("Setting Walzenlage: from left to right disks: ");
+			for (int i : d)
+				System.out.print(i + " ");
+			System.out.println();
+			
 			if (d.length != used_disks.length)
 				throw new Exception ("Argument number is incorrect");
+			
 			for (int i = 0; i < d.length; i++) {
 				if (d[i] < 0 || d[i] >= disks.length)
 					throw OutOfRange;
@@ -86,11 +95,16 @@ public class Enigma implements stuff {
 		try {
 			if (s.length() != used_disks.length)
 				throw new Exception ( "Input string is not of correct length" );
-			for (int i = 1; i <= used_disks.length; i++) {
-				char c = Character.toUpperCase(s.charAt(i - 1));
-				if ( c < Disk.getStart() || c >= used_disks[0].getLength() + Disk.getStart() )
+			
+			int i = used_disks.length - 1;
+			
+			for (Disk current_disk: used_disks) {
+				
+				char c = Character.toUpperCase(s.charAt(i));
+				if ( c < Disk.getStart() || c >= current_disk.getLength() + Disk.getStart() )
 					throw OutOfRange;
-				used_disks[used_disks.length - i].setPosition(c);
+				current_disk.setPosition(c);
+				i--;
 			}
 		} catch (Exception e) {
 			throw new Exception ("Error in Ringstellung setting process", e);
@@ -114,7 +128,7 @@ public class Enigma implements stuff {
 			default:
 				break;	
 			}
-			System.out.println("Connection set.");
+			//System.out.println("Connection set.");
 		}
 		catch (Exception e) {
 			throw new Exception ("Error setting Steckervervindung", e);
@@ -122,7 +136,7 @@ public class Enigma implements stuff {
 	}
 	
 	public void operate( int n ) {
-		if (used_disks[n].notchReached() && n <= used_disks.length) operate(n+1);
+		if (used_disks[n].notchReached() && n <= turning_disks) operate(n+1);
 		used_disks[n].turn();
 	}
 	
@@ -135,10 +149,11 @@ public class Enigma implements stuff {
 			c = steckerbrett.chip(c);
 			s += c + " -ETW-> ";
 			c = etw.chip(c);
-			int i;
-			for (i = 0; i < used_disks.length; i++) {
+			int i = 0;
+			for (Disk current_disk: used_disks) {
 				s += c + " -ROT" + i + "-> ";
-				c = used_disks[i].chip(c);
+				c = current_disk.chip(c);
+				i++;
 			}
 			s += c + " -UKW-> ";
 			c = used_ukw.chip(c);
@@ -168,7 +183,7 @@ public class Enigma implements stuff {
 		return s;
 		
 	}
-	private void debug(String s) {
+	public static void debug(String s) {
 		if (debugMode)
 			System.out.println(s);
 	}

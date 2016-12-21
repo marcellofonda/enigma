@@ -25,14 +25,26 @@ public class Test {
 					new Disk ("VZBRGITYUPSDNHLXAWMJQOFECK", "Z")
 			};
 		
-			
-			Enigma one = new Enigma (26, alpha_ekw, one_r, one_d, 3);
+			Enigma one = new Enigma (26, alpha_ekw, one_r, one_d, 3, 3);
 			one.debugMode = false;
-			one.setReflector(1);
+			
+			one.setReflector(0);
 			one.setWalzenlage(0, 1, 2);
-			one.setRingstellung("AAA");
+			one.setRingstellung("ITA");
 			one.setSteckerverbindung('H', 'B');
-			String s = "JRLMREKFECMELMBNYAUCUHTG";
+			one.setSteckerverbindung('A', 'E');
+			one.setSteckerverbindung('M', 'O');
+			one.setSteckerverbindung('F', 'G');
+			one.setSteckerverbindung('N', 'L');
+			one.setSteckerverbindung('P', 'Q');
+			one.setSteckerverbindung('D', 'R');
+			one.setSteckerverbindung('K', 'I');
+			one.setSteckerverbindung('S', 'W');
+			one.setSteckerverbindung('Z', 'C');
+			
+			
+			
+			String s = "VUXMTUNECHLLFGNNEPHMDSCAONYCSEJVGRFSGTRHOVLXIBNT";
 			for (int i = 0; i < s.length(); i++)
 				System.out.print(one.chip(s.charAt(i)));
 			

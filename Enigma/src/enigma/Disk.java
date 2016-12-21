@@ -1,5 +1,6 @@
 package enigma;
 
+
 /**
  * 
  * @author Marcello
@@ -24,13 +25,16 @@ public class Disk extends Component {
 	public char chip (char c) throws Exception {
 		try {
 			int n = (Character.toUpperCase (c) - start);
-			//System.out.print("disk.chip:" + n);
+			Enigma.debug ("disk.chip:" + n);
+			
 			char d = (char) (encode((n + offset) % wiring.length) + start);
-			//System.out.print(d);
+			Enigma.debug (d +"");
+			
 			d = (char) (d - offset);
 			if (d < start)
 				d += wiring.length;
-			//System.out.println(d);
+			Enigma.debug (d +"");
+			
 			return d;
 		} catch (Exception e) {
 			throw new Exception ("Error in disk chip process", e);
@@ -47,9 +51,9 @@ public class Disk extends Component {
 		try {
 			
 			for (char i = start; i < wiring.length + start; i++) {
-				//System.out.print("disk.rechip(" + c + "): " + i + "\n\t");
+				Enigma.debug ("disk.rechip(" + c + "): " + i + "\n\t");
 				if (chip(i) == c) {
-					//System.out.println("Found " + i);
+					Enigma.debug ("Found " + i);
 					return i;
 				}
 			}
