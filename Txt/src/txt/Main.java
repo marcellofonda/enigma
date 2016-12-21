@@ -19,8 +19,6 @@ public class Main {
 	public static void main(String[] args) {
 
 		try {
-			File input = new File("/Users/Marcello/input.txt");
-			System.out.println(input.getName());
 			Machines machines = new Machines (path);
 			
 			for(String machine: machines.getAvailable())
