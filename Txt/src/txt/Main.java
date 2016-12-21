@@ -16,6 +16,7 @@ public class Main {
 	
 	public static File path = new File("/Users/Marcello/enigma");
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 
 		try {
@@ -23,7 +24,7 @@ public class Main {
 			
 			for(String machine: machines.getAvailable())
 				System.out.println(machine);
-			machines.getMachine("one");
+			Enigma enigma = machines.getMachine("one");
 		} catch(Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
