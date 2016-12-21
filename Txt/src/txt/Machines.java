@@ -12,7 +12,14 @@ public class Machines {
 		dir = new File (parent, "machines");
 	}
 	public String [] getAvailable () {
-		return dir.list();
+		return dir.list(new FilenameFilter () {
+
+			@Override
+			public boolean accept(File arg0, String arg1) {
+				return !arg1.equals(".DS_Store");
+			}
+			
+		});
 
 	}
 	
@@ -20,7 +27,7 @@ public class Machines {
 		return new File (dir, dir.list(new FilenameFilter () {
 
 			@Override
-			public boolean accept(File file, String name) {
+			public boolean accept(File dir, String name) {
 				
 				return name.equals(s);
 			}
