@@ -45,9 +45,9 @@ public class Component implements stuff {
 		try {
 			
 			int n = Character.toUpperCase (c) - start;
-			//System.out.print("-" + n);
+			Enigma.debug("-" + n);
 			c = (char) (encode(n) + start);
-			//System.out.println(c);
+			Enigma.debug(c +"");
 			return c;
 			
 		} catch ( Exception e) {
