@@ -11,7 +11,7 @@ package enigma;
 
 //TODO Create Javadoc comments for chip, clearWiring, test
 
-public class Component implements stuff {
+public class Component {
 	
 	protected static char start = 'A';
 	
@@ -95,8 +95,10 @@ public class Component implements stuff {
 			int n1 = Character.toUpperCase(c1) - start;
 			int n2 = Character.toUpperCase(c2) - start;
 
-			if (n1 < 0 || n1 >= wiring.length || n2 < 0 || n2 >= wiring.length) 
-				throw OutOfRange;
+			if (n1 < 0 || n1 >= wiring.length) 
+				throw new IndexOutOfBoundsException ("Specified character is invalid: " + c1);
+			if (n2 < 0 || n2 >= wiring.length)
+				throw new IndexOutOfBoundsException ("Specified character is invalid: " + c2);
 			int n = n1;
 			for (int i = 0; i < 2; i++) {
 				if (wiring[n] != n) {

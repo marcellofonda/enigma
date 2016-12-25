@@ -7,7 +7,7 @@ import java.util.Arrays;
  * @author Marcello Fonda
  *
  */
-public class Enigma implements stuff {
+public class Enigma {
 	
 	private final int turning_disks;
 	private Component steckerbrett;
@@ -111,7 +111,7 @@ public class Enigma implements stuff {
 				
 				char c = Character.toUpperCase(s.charAt(i));
 				if ( c < Disk.getStart() || c >= current_disk.getLength() + Disk.getStart() )
-					throw OutOfRange;
+					throw new IndexOutOfBoundsException ("Specified character is invalid: " + c);
 				current_disk.setPosition(c);
 				i--;
 			}

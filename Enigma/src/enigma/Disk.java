@@ -74,7 +74,7 @@ public class Disk extends Component {
 		try {
 			int i = Character.toUpperCase (c) - start;
 			if ( i < 0 || i >= wiring.length) 
-				throw OutOfRange;
+				throw new IndexOutOfBoundsException ("Specified character is invalid: " + c);
 			else offset = i;
 		} catch (Exception e) {
 			throw new Exception ("Error setting disk position", e);
