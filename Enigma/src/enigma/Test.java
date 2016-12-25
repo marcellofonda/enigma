@@ -26,8 +26,20 @@ public class Test {
 			};
 		
 			Enigma one = new Enigma (26, alpha_ekw, one_r, one_d, 3, 3);
-			one.debugMode = false;
+			Enigma.debugMode = false;
+			for(char c = Disk.start; c < Disk.start + one_d[0].getLength(); c++) {
+				System.out.print(one_d[0].chip(c));
+			}
 			
+			System.out.println();
+			for(char c = Disk.start; c<Disk.start + one_d[0].getLength(); c++) {
+				System.out.print(one_r[0].chip(c));
+			}
+			System.out.println();
+			Disk d = new Disk(alpha_ekw.getWiring(), "");
+			for(char c = Disk.start; c<Disk.start + one_d[0].getLength(); c++) {
+				System.out.print(d.chip(c));
+			}
 			one.setReflector(0);
 			one.setWalzenlage(0, 1, 2);
 			one.setRingstellung("ITA");

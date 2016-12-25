@@ -17,22 +17,30 @@ public class Enigma implements stuff {
 	private Disk[] disks;
 	private Disk[] used_disks;
 	public static boolean debugMode;
+	private String name;
 
-	public Enigma( int letter_num, Component Ekw, Reflector[] Ukws, Disk[] disks, int disk_num, int turning_disks ) {
-		
+	
+	public Enigma ( int letter_num, Component Ekw, Reflector[] Ukws, Disk[] disks, int disk_num, int turning_disks, String name ) {
 		this.steckerbrett = new Component(letter_num);
 		this.etw = new Disk(Ekw.getWiring(), "");
 		this.ukws = (Reflector[]) Reflector.copy(Ukws);
 		this.disks = Disk.copy(disks);
 		used_disks = new Disk[disk_num];
 		this.turning_disks = turning_disks;
+		this.name = new String (name);
+	}
+	public Enigma( int letter_num, Component Ekw, Reflector[] Ukws, Disk[] disks, int disk_num, int turning_disks ) {
+		
+		this(letter_num, Ekw, Ukws, disks, disk_num, turning_disks, "NO NAME");
 		
 	}
+	
+	//TODO NEW CONSTRUCTOR WITH SPECIAL DISKS
 	
 	public void setReflector (int i) throws Exception {
 		try {
 			if (i < 0 || i >= ukws.length)
-				throw OutOfRange;
+				throw new IndexOutOfBoundsException ("Specified reflector does not exist: " + i);
 			debug ("Setting reflector " + (char)(i + 'A'));
 			used_ukw = ukws[i];
 		} catch (Exception e) {
@@ -52,10 +60,10 @@ public class Enigma implements stuff {
 	 * @param d the indexes of the {@code disks} to set (choosing from the , as you could see them from the top, from left to right
 	 * @throws Exception 
 	 */
+	//TODO adapt to special disks
 	public void setWalzenlage (int... d) throws Exception {
 		try {
-			// FINISH!
-			System.out.print("Setting Walzenlage: from left to right disks: ");
+			System.out.print("Enigma " + name + ": Setting Walzenlage: from left to right disks: ");
 			for (int i : d)
 				System.out.print(i + " ");
 			System.out.println();
@@ -65,9 +73,10 @@ public class Enigma implements stuff {
 			
 			for (int i = 0; i < d.length; i++) {
 				if (d[i] < 0 || d[i] >= disks.length)
-					throw OutOfRange;
+					throw new IndexOutOfBoundsException ("Specified disk does not exist: at position "
+							+ i + ", " + d[i]);
 				debug("Setting disk " + (d[i] + 1) + " at position " + (used_disks.length - i) + " from the right");
-				// E.g. i = 0 -> used_disks[2] == disks[d[0]]
+				
 				used_disks[used_disks.length - 1 - i] = new Disk (disks[d[i]]);
 			}
 			if (debugMode)
@@ -113,7 +122,7 @@ public class Enigma implements stuff {
 	
 	public void setSteckerverbindung (char a, char b) throws Exception {
 		try {
-			System.out.println("Setting Steckerverbindung (connection) between " + a + " and " + b + "...");
+			System.out.println("Enigma " + name + ": Setting Steckerverbindung (connection) between " + a + " and " + b + "...");
 			
 			switch (steckerbrett.connect(a, b)) {
 			case 1:
@@ -175,12 +184,23 @@ public class Enigma implements stuff {
 		
 	}
 	
-	//TODO Complete
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public String toString () {
-		String s = "[";
-		
-		return s;
+		return name;
 		
 	}
 	public static void debug(String s) {

@@ -13,25 +13,35 @@ package enigma;
 
 public class Component implements stuff {
 	
-	protected int [] wiring;
-	
 	protected static char start = 'A';
 	
-	public Component () {
-		this ( "" );
+	protected int [] wiring;
+	protected String name;
+	
+	public Component ( String w, String name ) {
+		setWiring(w);
+		setName(name);
 	}
 	
-	public Component ( int n ) {
+	public Component ( String w ) {
+		this(w,"NO NAME");
+	}
+	
+	public Component () {
+		this ( "", "NO NAME" );
+	}
+	
+	public Component ( int n, String name ) {
+		setName (name);
 		wiring = new int [n];
 		clearWiring();
 	}
 	
-	public Component ( Component c ) {
-		this(c.getWiring());
+	public Component ( int n ) {
+		this(n, "NO NAME");
 	}
-	
-	public Component ( String w ) {
-		setWiring(w);
+	public Component ( Component c ) {
+		this(c.getWiring(), c.getName());
 	}
 	
 	/**
@@ -84,7 +94,7 @@ public class Component implements stuff {
 			int ret = 0;
 			int n1 = Character.toUpperCase(c1) - start;
 			int n2 = Character.toUpperCase(c2) - start;
-			
+
 			if (n1 < 0 || n1 >= wiring.length || n2 < 0 || n2 >= wiring.length) 
 				throw OutOfRange;
 			int n = n1;
@@ -154,6 +164,10 @@ public class Component implements stuff {
 			this.wiring[i] = wiring.charAt(i) - start;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getLength() {
 		return wiring.length;
 	}
@@ -167,12 +181,25 @@ public class Component implements stuff {
 	}
 	*/
 	
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = new String(name);
+	}
+
 	@Override
 	public String toString () {
-		
-		String s = "[";
-		
-		s += getWiring() + "]";
+		String s = "";
+		for(int i = name.lastIndexOf('_') + 1; i < name.length(); i++)
+			s += name.charAt(i);
 		
 		return s;
 	}

@@ -11,13 +11,17 @@ public class Disk extends Component {
 	private int[] notches;
 	private int offset;
 	
-	public Disk (String wiring, String turnovers) {
+	public Disk (String wiring, String turnovers, String name) {
 		super(wiring);
 		setNotches(turnovers);
 		offset = 0;
+		setName(name);
+	}
+	public Disk (String wiring, String turnovers) {
+		this(wiring, turnovers, "NO NAME");
 	}
 	public Disk (Disk d) {
-		this(d.getWiring(), d.getNotches());
+		this(d.getWiring(), d.getNotches(), d.getName());
 	}
 	
 	//Inherited from enigma.Component
@@ -105,14 +109,6 @@ public class Disk extends Component {
 		return false;
 	}
 	
-	//Inherited from enigma.Component
-	@Override
-	public String toString () {
-		String s = super.toString();
-		s += "[" + getNotches() + "]";
-		return s;
-	}
-	
 	public static Disk[] copy ( Disk[] c ) {
 
 		Disk[] ret = new Disk[c.length];
@@ -127,7 +123,7 @@ public class Disk extends Component {
 			System.out.println("Test started");
 			for (char i = start; i < wiring.length + start; i++) {
 				char c = chip(i);
-				System.out.print("\t" + i + "->" + c);
+				System.out.println("\t" + i + "->" + c);
 				if(rechip(c) != i)
 					throw new Exception ("Invalid disk");
 				System.out.println(" OK");
