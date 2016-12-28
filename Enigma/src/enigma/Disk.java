@@ -10,11 +10,13 @@ public class Disk extends Component {
 
 	private int[] notches;
 	private int offset;
+	private int setting;
 	
 	public Disk (String wiring, String turnovers, String name) {
 		super(wiring);
 		setNotches(turnovers);
 		offset = 0;
+		setting = 0;
 		setName(name);
 	}
 	public Disk (String wiring, String turnovers) {
@@ -30,13 +32,18 @@ public class Disk extends Component {
 		try {
 			int n = (Character.toUpperCase (c) - start);
 			Enigma.debug ("disk.chip:" + n);
-			
-			char d = (char) (encode((n + offset) % wiring.length) + start);
+			n = n + offset - setting;
+			if (n < 0)
+				n += wiring.length;
+			n %= wiring.length;
+			char d = (char) (encode(n) + start);
 			Enigma.debug (d +"");
 			
-			d = (char) (d - offset);
+			d = (char) (d - offset + setting);
 			if (d < start)
 				d += wiring.length;
+			else if (d >= start + wiring.length)
+				d -= wiring.length;
 			Enigma.debug (d +"");
 			
 			return d;
@@ -89,6 +96,24 @@ public class Disk extends Component {
 		offset = ++offset % wiring.length;
 	}
 
+	/**
+	 * @return the setting
+	 */
+	public int getRingSetting() {
+		return setting;
+	}
+	/**
+	 * @param setting the setting to set
+	 */
+	public void setRingSetting(int setting) throws Exception {
+		try {
+			if (setting < 0 || setting >= wiring.length)
+				throw new IndexOutOfBoundsException ("Specified value doesn't fit the disk wiring: " + setting);
+			this.setting = setting;
+		} catch (Exception e) {
+			throw new Exception ("Error setting ring for disk " + this, e);
+		}
+	}
 	public String getNotches() {
 		String s = "";
 		for (int i = 0; i < notches.length; i++) {
@@ -120,7 +145,7 @@ public class Disk extends Component {
 	
 	public void check() {
 		try {
-			System.out.println("Test started");
+			System.out.println("Test started, disk " + this);
 			for (char i = start; i < wiring.length + start; i++) {
 				char c = chip(i);
 				System.out.println("\t" + i + "->" + c);

@@ -8,41 +8,82 @@ import java.io.*;
 import enigma.Enigma;
 
 /**
- * @author toader
+ * @author Marcello Fonda
  *
  */
 public class Settings extends FileManager {
-
+	
+	/**
+	 * 
+	 * @param parent
+	 */
 	public Settings(File parent) {
 		super(parent, "settings");
 	}
 	
-	public Enigma loadSettings (Machines machines, String s) throws Exception {
-		InputStream setting = null;
+	/**
+	 * 
+	 * @param machines the machines from 
+	 * @param components
+	 * @param setting
+	 * @return the Enigma machine specified in the setting file, set as specified in the file
+	 * @throws Exception
+	 */
+	public Enigma loadSetting (Machines machines, Components components, String setting) throws Exception {
+		InputStream settings = null;
 		try {
-			setting = new FileInputStream(getFile(s));
+			settings = new FileInputStream (new File(dir, setting));
 			
+			//Get the machine
+			Enigma ret = machines.getMachine(readLine(settings), components);
+			settings.read();
 			
-			return null;
-		} catch (Exception e) {
-			throw new Exception ("Error loading setting " + s, e);
+			//The number of used disks of the machine
+			int disk_num = ret.getDiskNum();
+			
+			//Set Walzenlage
+			String [] walzenlage = new String[disk_num];
+			for (int i = 0; i < disk_num; i++) {
+				walzenlage[i] = readWord(settings);
+			}
+			ret.setWalzenlage(walzenlage);
+			
+			//Set used UKW
+			ret.setUkw(readLine(settings));
+			
+			// Set Ring settings
+			int [] a = new int [disk_num];
+			for (int i = 0; i < disk_num; i++)
+				a[i] = Integer.parseInt(readWord(settings));
+			ret.setRingSetting(a);
+			
+			// Set Ringstellung
+			ret.setRingstellung(readLine(settings));
+			settings.read();
+			
+			//Set Steckerbrett wiring
+			String couple = readLine(settings);
+			while ( !couple.equals("") ) {
+				ret.setSteckerverbindung(couple.charAt(0), couple.charAt(1));
+				couple = readLine(settings);
+			}
+			return ret;
+		} catch (FileNotFoundException e) {
+			throw new Exception ("Error loading setting " + setting, e);
 		} finally {
-			if(setting != null)
-				setting.close();
+			if (settings != null)
+				settings.close();
 		}
 		
-	}
-	
-	public Enigma loadSetting (String setting) {
-		return null;
 	}
 	
 	public void saveCurrentSetting (Enigma enigma, String s) throws Exception {
 		OutputStream new_setting = null;
 		try {
 			//Check if name is available
-			if (getFile(s) != null)
-				throw new Exception ("Name was already taken");
+			if (getFile(s) != null) {
+				//TODO delete if necessary
+			}
 			
 			//Define the FileStream where to save the setting
 			new_setting = new FileOutputStream(new File(dir, s));

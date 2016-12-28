@@ -15,35 +15,61 @@ public class Component {
 	
 	protected static char start = 'A';
 	
+	private final int max_connections;
+	private int used_connections;
+	
 	protected int [] wiring;
 	protected String name;
+	
+	public Component ( String w, int max, String name ) {
+		setWiring(w);
+		setName(name);
+		max_connections = max;
+		used_connections = 0;
+	}
 	
 	public Component ( String w, String name ) {
 		setWiring(w);
 		setName(name);
+		max_connections = wiring.length / 2;
+		used_connections = 0;
+	}
+	
+	public Component ( String w, int max ) {
+		this(w, max, "NO NAME");
 	}
 	
 	public Component ( String w ) {
 		this(w,"NO NAME");
 	}
 	
-	public Component () {
-		this ( "", "NO NAME" );
-	}
-	
-	public Component ( int n, String name ) {
+	public Component ( int n, int max, String name ) {
 		setName (name);
 		wiring = new int [n];
 		clearWiring();
+		max_connections = max;
+		used_connections = 0;
 	}
 	
+	public Component ( int n, String name ) {
+		this(n, n/2, name);
+	}
+	
+	public Component ( int n, int max ) {
+		this(n, max, "NO NAME");
+	}
+
 	public Component ( int n ) {
 		this(n, "NO NAME");
 	}
 	public Component ( Component c ) {
-		this(c.getWiring(), c.getName());
+		this(c.getWiring(), c.max_connections, c.getName());
 	}
 	
+	public Component () {
+		this ( "", "NO NAME" );
+	}
+
 	/**
 	 * Returns the contact at the other side of the disk to find 
 	 * @param c the character to pass through the wiring of the machine
@@ -92,6 +118,7 @@ public class Component {
 	public int connect ( char c1, char c2 ) throws Exception {
 		try {
 			int ret = 0;
+			
 			int n1 = Character.toUpperCase(c1) - start;
 			int n2 = Character.toUpperCase(c2) - start;
 
@@ -99,26 +126,46 @@ public class Component {
 				throw new IndexOutOfBoundsException ("Specified character is invalid: " + c1);
 			if (n2 < 0 || n2 >= wiring.length)
 				throw new IndexOutOfBoundsException ("Specified character is invalid: " + c2);
-			int n = n1;
-			for (int i = 0; i < 2; i++) {
-				if (wiring[n] != n) {
-					wiring[wiring[n]] = wiring[n];
-					wiring[n] = n;
-					ret += i + 1;
-				}
-				n = n2;
-				
+			
+			if (removeConnection(c1)) {
+				ret++;
+				used_connections--;
 			}
+			if (removeConnection(c2)) {
+				ret += 2;
+				used_connections--;
+			}
+			
+			if (ret == 0 && used_connections == max_connections)
+				return -1;
 			
 			wiring[n1] = n2;
 			wiring[n2] = n1;
+			used_connections++;
 			
 			return ret;
+			
 		} catch (Exception e) {
 			throw new Exception ( "Error while setting connection", e);
 		}
 		
 		
+	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @return <b>true</b> if a connection was removed, <b>false</b> otherwise
+	 */
+	public boolean removeConnection (char c) {
+		int n = Character.toUpperCase(c) - start;
+		if (wiring[n] != n) {
+			wiring[wiring[n]] = wiring[n];
+			wiring[n] = n;
+			return true;
+		}
+		return false;
+
 	}
 
 	public void test () throws Exception {
@@ -142,7 +189,7 @@ public class Component {
 
 	
 	public void setStart ( char c ) {
-		start = c;
+		start = Character.toUpperCase(c);
 	}
 	
 

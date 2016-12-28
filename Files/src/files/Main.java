@@ -8,7 +8,7 @@ import java.io.*;
 import enigma.Enigma;
 
 /**
- * @author Marcello
+ * @author Marcello Fonda
  *
  */
 public class Main {
@@ -26,24 +26,12 @@ public class Main {
 			for(String machine: machines.getAvailable())
 				System.out.println(machine);
 			
-			
 			Enigma I = machines.getMachine("I", components);
 			Enigma m3 = machines.getMachine("m3", components);
 			Enigma norway = machines.getMachine("norway", components);
 			
-			I.setReflector(0);
-			I.setWalzenlage(0, 1, 2);
-			I.setRingstellung("ITA");
-			I.setSteckerverbindung('H', 'B');
-			I.setSteckerverbindung('A', 'E');
-			I.setSteckerverbindung('M', 'O');
-			I.setSteckerverbindung('F', 'G');
-			I.setSteckerverbindung('N', 'L');
-			I.setSteckerverbindung('P', 'Q');
-			I.setSteckerverbindung('D', 'R');
-			I.setSteckerverbindung('K', 'I');
-			I.setSteckerverbindung('S', 'W');
-			I.setSteckerverbindung('Z', 'C');
+			
+			I = settings.loadSetting(machines, components, "basic");
 			
 			String s = "VUXMTUNECHLLFGNNEPHMDSCAONYCSEJVGRFSGTRHOVLXIBNT";
 			String enchipered = "";
@@ -52,6 +40,7 @@ public class Main {
 			
 			System.out.println (enchipered);
 			//OK!
+			
 		} catch(Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -43,20 +43,17 @@ public class Machines extends FileManager {
 			Disk [] disks = null;
 			int disk_num = 0;
 			int turning_disks = 0;
+			int max_steckerverbindungen = 0;
 			
 			// Read first line to find an int (letter_num)
 			letter_num = Integer.parseInt(readLine(blueprints));
 			Enigma.debug(""+ letter_num);
 			blueprints.read();
 			
-			/**/
-			
 			// Read second line to find the name of the etw
 			etw = components.getComponent("etws", readLine(blueprints));
 			Enigma.debug(""+ etw);
 			blueprints.read();
-			
-			/**/
 			
 			// Read third line to find an int (number of available disks)
 			int available_num = Integer.parseInt(readLine(blueprints));
@@ -69,8 +66,6 @@ public class Machines extends FileManager {
 			}
 			available_num = 0;
 			blueprints.read();
-			
-			/**/
 			
 			// Read an int (number of available ukws)
 			available_num = Integer.parseInt(readLine(blueprints));
@@ -86,19 +81,19 @@ public class Machines extends FileManager {
 			}
 			blueprints.read();
 			
-			/**/
-			
 			// Read the number of used disks and the number of turning disks
 			disk_num = Integer.parseInt(readLine(blueprints));
 			blueprints.read();
 			turning_disks = Integer.parseInt(readLine(blueprints));
-			
+			blueprints.read();
+			max_steckerverbindungen = Integer.parseInt(readLine(blueprints));
 			
 			// Build the machine
-			return new Enigma(letter_num, etw, ukws, disks, disk_num, turning_disks, machine_name);
+			return new Enigma(letter_num, etw, ukws, disks, disk_num, turning_disks, max_steckerverbindungen,
+					machine_name);
 			
 		} catch (Exception e) {
-			throw new Exception ("Error opening Enigma " + machine_name + ".", e);
+			throw new Exception ("Error opening Enigma " + machine_name, e);
 		} finally {
 			// Close the stream
 			if (blueprints != null)

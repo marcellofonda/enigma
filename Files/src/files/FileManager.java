@@ -55,24 +55,32 @@ public class FileManager {
 	}
 	
 	String readLine (InputStream stream) throws IOException {
+		return readUntil(stream, '\n');
+	}
+	
+	String readWord (InputStream stream) throws IOException {
+		return readUntil(stream, ' ');
+	}
+	
+	String readUntil (InputStream stream, final char end) throws IOException {
 		String s = "";
 		int c = stream.read();
 		c = checkComment(stream, c);
-		s += scanLine(stream, c);
+		s += scan(stream, c, end);
 		return s;
 	}
 	
 	int checkComment(InputStream stream, int c) throws IOException {
 		if (c == comment_char) {
-			scanLine (stream, c);
+			scan (stream, c, '\n');
 			c = stream.read();
 			c = checkComment(stream, c);
 		} return c;
 	}
 	
-	String scanLine (InputStream stream, int c) throws IOException {
+	String scan (InputStream stream, int c, final char end) throws IOException {
 		String s = "";
-		while(c != '\n' && c != -1) {
+		while(c != end && c != '\n' && c != -1) {
 			s += (char)c;
 			c = stream.read();
 		}

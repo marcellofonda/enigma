@@ -20,22 +20,49 @@ public class Enigma {
 	private String name;
 
 	
-	public Enigma ( int letter_num, Component Ekw, Reflector[] Ukws, Disk[] disks, int disk_num, int turning_disks, String name ) {
-		this.steckerbrett = new Component(letter_num);
-		this.etw = new Disk(Ekw.getWiring(), "");
-		this.ukws = (Reflector[]) Reflector.copy(Ukws);
+	public Enigma ( int letter_num, Component Ekw, Reflector[] Ukws, Disk[] disks, int disk_num,
+			int turning_disks, int max_verbindungen, String name) {
+		
+		this.steckerbrett = new Component(letter_num, max_verbindungen);
+		this.etw = new Disk(Ekw.getWiring(), "", Ekw.getName());
+		this.ukws = Reflector.copy(Ukws);
 		this.disks = Disk.copy(disks);
 		used_disks = new Disk[disk_num];
 		this.turning_disks = turning_disks;
 		this.name = new String (name);
 	}
-	public Enigma( int letter_num, Component Ekw, Reflector[] Ukws, Disk[] disks, int disk_num, int turning_disks ) {
+	public Enigma( int letter_num, Component Ekw, Reflector[] Ukws, Disk[] disks, int disk_num, 
+			int turning_disks, String name ) {
 		
-		this(letter_num, Ekw, Ukws, disks, disk_num, turning_disks, "NO NAME");
+		this.steckerbrett = new Component(letter_num);
+		this.etw = new Disk(Ekw.getWiring(), "", Ekw.getName());
+		this.ukws = Reflector.copy(Ukws);
+		this.disks = Disk.copy(disks);
+		used_disks = new Disk[disk_num];
+		this.turning_disks = turning_disks;
+		this.name = new String (name);
 		
 	}
-	
+	public Enigma( int letter_num, Component Ekw, Reflector[] Ukws, Disk[] disks, int disk_num, 
+			int turning_disks, int max_verbindungen ) {
+		
+		this(letter_num, Ekw, Ukws, disks, disk_num, turning_disks, max_verbindungen, "NO NAME");
+		
+	}
+	public Enigma( int letter_num, Component Ekw, Reflector[] Ukws, Disk[] disks, int disk_num, int turning_disks ) {
+		
+		this(letter_num, Ekw, Ukws, disks, disk_num, turning_disks, -1, "NO NAME");
+		
+	}
 	//TODO NEW CONSTRUCTOR WITH SPECIAL DISKS
+	
+	public String [] getDisks () {
+		String [] s = new String [disks.length];
+		int index = 0;
+		for(Disk d: disks)
+			s[index++] = d.toString();
+		return s;
+	}
 	
 	public void setReflector (int i) throws Exception {
 		try {
@@ -45,6 +72,21 @@ public class Enigma {
 			used_ukw = ukws[i];
 		} catch (Exception e) {
 			throw new Exception ("Error setting reflector to use", e);
+		}
+	}
+	public void setUkw (String s) throws Exception {
+		try {
+			System.out.println("Enigma " + this + ": Setting UKW: " + s);
+			for (int i = 0; i < ukws.length; i++) {
+				debug ("Comparing " + s + " with " + ukws[i]);
+				if( s.equals(ukws[i].toString()) ) {
+					setReflector(i);
+					return;
+				}
+			}
+			throw new Exception ("UKW " + s + " not found");
+		} catch (Exception e) {
+			throw new Exception ("Error setting UKW", e);
 		}
 	}
 	
@@ -61,15 +103,11 @@ public class Enigma {
 	 * @throws Exception 
 	 */
 	//TODO adapt to special disks
-	public void setWalzenlage (int... d) throws Exception {
+	public void setUsedDisks (int... d) throws Exception {
 		try {
-			System.out.print("Enigma " + name + ": Setting Walzenlage: from left to right disks: ");
-			for (int i : d)
-				System.out.print(i + " ");
-			System.out.println();
 			
 			if (d.length != used_disks.length)
-				throw new Exception ("Argument number is incorrect");
+				throw new Exception ("Argument number is incorrect: " + d.length + "; should be " + used_disks.length);
 			
 			for (int i = 0; i < d.length; i++) {
 				if (d[i] < 0 || d[i] >= disks.length)
@@ -84,7 +122,37 @@ public class Enigma {
 					used_disks[i].check();	
 				}
 		} catch (Exception e) {
-			throw new Exception ("Error in Walzenlage setting process", e);
+			throw new Exception ("Error setting used disks", e);
+		}
+	}
+	
+	public void setWalzenlage (String... strings) throws Exception {
+		try {
+			System.out.print("Enigma " + name + ": Setting Walzenlage: from left to right disks: ");
+			for (String s: strings)
+				System.out.print(s + " ");
+			System.out.println();
+			
+			if(strings.length != used_disks.length)
+				throw new Exception ("Number of disks is incorrect: " + strings.length + "; should be " + used_disks.length);
+			
+			int [] a = new int [strings.length];
+			int index = 0;
+			for (String s: strings) {
+				int i;
+				for (i = 0; i < disks.length; i++) {
+					debug ("Comparing " + s + " with " + disks[i]);
+					if( s.equals(disks[i].toString()) ) {
+						a[index++] = i;
+						break;
+					}
+				}
+				if (i == disks.length)
+					throw new Exception ("Disk " + s + " not found");
+			}
+			setUsedDisks(a);
+		} catch (Exception e) {
+			throw new Exception ("Error setting Walzenlage", e);
 		}
 	}
 	
@@ -120,11 +188,24 @@ public class Enigma {
 		}
 	}
 	
+	public void setRingSetting (int... setting) throws Exception{
+		try {
+			for (int i = 0; i < used_disks.length; i++) {
+				used_disks[used_disks.length - i - 1].setRingSetting(setting[i]);
+			}
+		} catch (Exception e) {
+			throw new Exception ("Error setting rings", e);
+		}
+	}
+	
 	public void setSteckerverbindung (char a, char b) throws Exception {
 		try {
 			System.out.println("Enigma " + name + ": Setting Steckerverbindung (connection) between " + a + " and " + b + "...");
 			
 			switch (steckerbrett.connect(a, b)) {
+			case -1:
+				System.out.println ("Unable to set connection: max number of connections reached");
+				break;
 			case 1:
 				System.out.println ("Removed existing connection for " + a);
 				break;
@@ -137,13 +218,29 @@ public class Enigma {
 			default:
 				break;	
 			}
-			//System.out.println("Connection set.");
 		}
 		catch (Exception e) {
 			throw new Exception ("Error setting Steckervervindung", e);
 		}
 	}
-	
+	/*
+	public String [] getSteckerverbindungen () throws Exception {
+		try {
+			String [] ret = new String [];
+			int i = 0;
+			for (char c = Component.getStart(); c < steckerbrett.getLength() + Component.getStart(); c++) {
+				if(steckerbrett.chip(c) != c) {
+					ret[i++] += c + steckerbrett.chip(c);
+					if(i > used_verbindungen + 1)
+						throw new IndexOutOfBoundsException ("There are more Steckerverbindungen than actually tracked");
+				}
+			}
+			return ret;
+		} catch (Exception e) {
+			throw new Exception("Error getting Steckerverbindungen");
+		}
+	}
+	*/
 	public void operate( int n ) {
 		if (used_disks[n].notchReached() && n <= turning_disks) operate(n+1);
 		used_disks[n].turn();
@@ -196,6 +293,9 @@ public class Enigma {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+	public int getDiskNum () {
+		return used_disks.length;
 	}
 
 	@Override

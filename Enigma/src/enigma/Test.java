@@ -1,9 +1,8 @@
 package enigma;
 
 /**
- * Class with main function and testing purposes
- * @author Marcello
- * @deprecated On release
+ * For DIYS fans
+ * @author Marcello Fonda
  */
 public class Test {
 
@@ -12,37 +11,29 @@ public class Test {
 			Component alpha_ekw = new Component ("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 			
 			Reflector [] one_r = {
-					new Reflector("EJMZALYXVBWFCRQUONTSPIKHGD"),
-					new Reflector("YRUHQSLDPXNGOKMIEBFZCWVJAT"),
-					new Reflector("FVPJIAOYEDRZXWGCTKUQSBNMHL")
+					new Reflector("EJMZALYXVBWFCRQUONTSPIKHGD", "A"),
+					new Reflector("YRUHQSLDPXNGOKMIEBFZCWVJAT", "B"),
+					new Reflector("FVPJIAOYEDRZXWGCTKUQSBNMHL", "C")
 			};
 			
 			Disk [] one_d = {
-					new Disk ("EKMFLGDQVZNTOWYHXUSPAIBRCJ", "Q"),
-					new Disk ("AJDKSIRUXBLHWTMCQGZNPYFVOE", "E"),
-					new Disk ("BDFHJLCPRTXVZNYEIWGAKMUSQO", "V"),
-					new Disk ("ESOVPZJAYQUIRHXLNFTGKDCMWB", "J"),
-					new Disk ("VZBRGITYUPSDNHLXAWMJQOFECK", "Z")
+					new Disk ("EKMFLGDQVZNTOWYHXUSPAIBRCJ", "Q", "I"),
+					new Disk ("AJDKSIRUXBLHWTMCQGZNPYFVOE", "E", "II"),
+					new Disk ("BDFHJLCPRTXVZNYEIWGAKMUSQO", "V", "III"),
+					new Disk ("ESOVPZJAYQUIRHXLNFTGKDCMWB", "J", "IV"),
+					new Disk ("VZBRGITYUPSDNHLXAWMJQOFECK", "Z", "V")
 			};
-		
-			Enigma one = new Enigma (26, alpha_ekw, one_r, one_d, 3, 3);
+			for(Disk d: one_d)
+				System.out.println(d);
+			Enigma one = new Enigma (26, alpha_ekw, one_r, one_d, 3, 3, "one");
+			for(String s: one.getDisks())
+				System.out.println(s);
 			Enigma.debugMode = false;
-			for(char c = Disk.start; c < Disk.start + one_d[0].getLength(); c++) {
-				System.out.print(one_d[0].chip(c));
-			}
 			
-			System.out.println();
-			for(char c = Disk.start; c<Disk.start + one_d[0].getLength(); c++) {
-				System.out.print(one_r[0].chip(c));
-			}
-			System.out.println();
-			Disk d = new Disk(alpha_ekw.getWiring(), "");
-			for(char c = Disk.start; c<Disk.start + one_d[0].getLength(); c++) {
-				System.out.print(d.chip(c));
-			}
 			one.setReflector(0);
-			one.setWalzenlage(0, 1, 2);
-			one.setRingstellung("ITA");
+			one.setWalzenlage("I", "II", "III");
+			one.setRingstellung("AAA");
+			one.setRingSetting(0,0,0);
 			one.setSteckerverbindung('H', 'B');
 			one.setSteckerverbindung('A', 'E');
 			one.setSteckerverbindung('M', 'O');
@@ -56,7 +47,7 @@ public class Test {
 			
 			
 			
-			String s = "VUXMTUNECHLLFGNNEPHMDSCAONYCSEJVGRFSGTRHOVLXIBNT";
+			String s = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";//"VUXMTUNECHLLFGNNEPHMDSCAONYCSEJVGRFSGTRHOVLXIBNT";ZGGFNCYYXHQXTIIEXXZMQJWUWOBQCPKJJOIRDHI
 			for (int i = 0; i < s.length(); i++)
 				System.out.print(one.chip(s.charAt(i)));
 			

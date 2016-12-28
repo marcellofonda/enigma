@@ -12,8 +12,11 @@ public class Reflector extends Component {
 	 * @return true if reflector is valid, false otherwise
 	 */
 	
+	public Reflector (String s, String name) {
+		super(s, name);
+	}
 	public Reflector (String s) {
-		super(s);
+		super(s, "NO NAME");
 	}
 	
 	public Reflector (Component c) {
