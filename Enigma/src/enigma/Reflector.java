@@ -40,7 +40,6 @@ public class Reflector extends Component {
 			throw new Exception ("Error in reflector chip process", e);
 		}
 	}
-	
 
 	public static Reflector[] copy ( Reflector[] c ) {
 

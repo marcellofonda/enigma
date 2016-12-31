@@ -1,9 +1,7 @@
 package enigma;
 
-import java.util.Arrays;
-
 /**
- * The {@code ENIGMA Machine} is a
+ * The {@code ENIGMA Machine} is a coding machine invented by Arthur Schrebius
  * @author Marcello Fonda
  *
  */
@@ -64,16 +62,15 @@ public class Enigma {
 		return s;
 	}
 	
-	public void setReflector (int i) throws Exception {
-		try {
-			if (i < 0 || i >= ukws.length)
-				throw new IndexOutOfBoundsException ("Specified reflector does not exist: " + i);
-			debug ("Setting reflector " + (char)(i + 'A'));
-			used_ukw = ukws[i];
-		} catch (Exception e) {
-			throw new Exception ("Error setting reflector to use", e);
-		}
+	public int getDiskNum () {
+		return used_disks.length;
 	}
+	public String getUkw () {
+		String s = "";
+		s += used_ukw;
+		return s;
+	}
+	
 	public void setUkw (String s) throws Exception {
 		try {
 			System.out.println("Enigma " + this + ": Setting UKW: " + s);
@@ -89,41 +86,23 @@ public class Enigma {
 			throw new Exception ("Error setting UKW", e);
 		}
 	}
-	
-	public String getReflector () {
-		String s = "";
-		s += (char) (Arrays.asList(ukws).indexOf(used_ukw) + Disk.getStart());
-		return s;
-	}
-	
-	/**
-	 * This method sets the <i>Walzenlage</i>, i.e. which disks are used in the chip process.
-	 * Will check for the right number of arguments comparing with that indicated in the constructor
-	 * @param d the indexes of the {@code disks} to set (choosing from the , as you could see them from the top, from left to right
-	 * @throws Exception 
-	 */
-	//TODO adapt to special disks
-	public void setUsedDisks (int... d) throws Exception {
+	public void setReflector (int i) throws Exception {
 		try {
-			
-			if (d.length != used_disks.length)
-				throw new Exception ("Argument number is incorrect: " + d.length + "; should be " + used_disks.length);
-			
-			for (int i = 0; i < d.length; i++) {
-				if (d[i] < 0 || d[i] >= disks.length)
-					throw new IndexOutOfBoundsException ("Specified disk does not exist: at position "
-							+ i + ", " + d[i]);
-				debug("Setting disk " + (d[i] + 1) + " at position " + (used_disks.length - i) + " from the right");
-				
-				used_disks[used_disks.length - 1 - i] = new Disk (disks[d[i]]);
-			}
-			if (debugMode)
-				for (int i = 0; i < used_disks.length; i++) {
-					used_disks[i].check();	
-				}
+			if (i < 0 || i >= ukws.length)
+				throw new IndexOutOfBoundsException ("Specified reflector does not exist: " + i);
+			debug ("Setting reflector " + (char)(i + 'A'));
+			used_ukw = ukws[i];
 		} catch (Exception e) {
-			throw new Exception ("Error setting used disks", e);
+			throw new Exception ("Error setting reflector to use", e);
 		}
+	}
+	public String [] getWalzenlage () {
+		String [] ret = new String [used_disks.length];
+		int i = 0;
+		for (Disk d: used_disks) {
+			ret[i++] = "" + d;
+		}
+		return ret;
 	}
 	
 	public void setWalzenlage (String... strings) throws Exception {
@@ -155,7 +134,35 @@ public class Enigma {
 			throw new Exception ("Error setting Walzenlage", e);
 		}
 	}
-	
+	/**
+	 * This method sets the <i>Walzenlage</i>, i.e. which disks are used in the chip process.
+	 * Will check for the right number of arguments comparing with that indicated in the constructor
+	 * @param d the indexes of the {@code disks} to set (choosing from the , as you could see them from the top, from left to right
+	 * @throws Exception 
+	 */
+	//TODO adapt to special disks
+	public void setUsedDisks (int... d) throws Exception {
+		try {
+			
+			if (d.length != used_disks.length)
+				throw new Exception ("Argument number is incorrect: " + d.length + "; should be " + used_disks.length);
+			
+			for (int i = 0; i < d.length; i++) {
+				if (d[i] < 0 || d[i] >= disks.length)
+					throw new IndexOutOfBoundsException ("Specified disk does not exist: at position "
+							+ i + ", " + d[i]);
+				debug("Setting disk " + (d[i] + 1) + " at position " + (used_disks.length - i) + " from the right");
+				
+				used_disks[used_disks.length - 1 - i] = new Disk (disks[d[i]]);
+			}
+			if (debugMode)
+				for (int i = 0; i < used_disks.length; i++) {
+					used_disks[i].check();	
+				}
+		} catch (Exception e) {
+			throw new Exception ("Error setting used disks", e);
+		}
+	}
 	/**
 	 *  Gives the rotation of each disk
 	 * @return The string representing the letters visible to the operator, from left to right
@@ -163,11 +170,10 @@ public class Enigma {
 	public String getRingstellung () {
 		String s = "";
 		for (int i = used_disks.length - 1; i > 0; i--)
-			s += used_disks[i].getPosition() + "-";
+			s += used_disks[i].getPosition();
 		s += used_disks[0].getPosition();
 		return s;
 	}
-	
 	public void setRingstellung ( String s ) throws Exception {
 		try {
 			if (s.length() != used_disks.length)
@@ -187,6 +193,14 @@ public class Enigma {
 			throw new Exception ("Error in Ringstellung setting process", e);
 		}
 	}
+	public int [] getRingSetting () {
+		int [] ret = new int [used_disks.length];
+		int index = used_disks.length - 1;
+		for(Disk d: used_disks) {
+			ret[index--] = d.getRingSetting();
+		}
+		return ret;
+	}
 	
 	public void setRingSetting (int... setting) throws Exception{
 		try {
@@ -195,6 +209,14 @@ public class Enigma {
 			}
 		} catch (Exception e) {
 			throw new Exception ("Error setting rings", e);
+		}
+	}
+	public String [] getSteckerverbindungen () throws Exception {
+		try {
+			String [] ret = steckerbrett.getConnections();
+			return ret;
+		} catch (Exception e) {
+			throw new Exception("Error getting Steckerverbindungen", e);
 		}
 	}
 	
@@ -223,24 +245,6 @@ public class Enigma {
 			throw new Exception ("Error setting Steckervervindung", e);
 		}
 	}
-	/*
-	public String [] getSteckerverbindungen () throws Exception {
-		try {
-			String [] ret = new String [];
-			int i = 0;
-			for (char c = Component.getStart(); c < steckerbrett.getLength() + Component.getStart(); c++) {
-				if(steckerbrett.chip(c) != c) {
-					ret[i++] += c + steckerbrett.chip(c);
-					if(i > used_verbindungen + 1)
-						throw new IndexOutOfBoundsException ("There are more Steckerverbindungen than actually tracked");
-				}
-			}
-			return ret;
-		} catch (Exception e) {
-			throw new Exception("Error getting Steckerverbindungen");
-		}
-	}
-	*/
 	public void operate( int n ) {
 		if (used_disks[n].notchReached() && n <= turning_disks) operate(n+1);
 		used_disks[n].turn();
@@ -250,7 +254,7 @@ public class Enigma {
 		String s = "]->";
 		try {
 			operate(0);
-			debug ("[" + getRingstellung() + "]");
+			debug (this + "[" + getRingstellung() + "]");
 			s = c + " -STECK-> ";
 			c = steckerbrett.chip(c);
 			s += c + " -ETW-> ";
@@ -271,12 +275,13 @@ public class Enigma {
 			c = etw.rechip(c);
 			s += c + " -STECK-> ";
 			c = steckerbrett.chip(c);
-			
-			debug(s);
+			s += c;
+
 			return c;
 		} catch (Exception e) {
-			debug(s);
 			throw new Exception ("Error in chip process", e);
+		} finally {
+			debug(s);
 		}
 		
 	}
@@ -294,10 +299,6 @@ public class Enigma {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getDiskNum () {
-		return used_disks.length;
-	}
-
 	@Override
 	public String toString () {
 		return name;

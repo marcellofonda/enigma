@@ -29,26 +29,29 @@ public class Disk extends Component {
 	//Inherited from enigma.Component
 	@Override
 	public char chip (char c) throws Exception {
+		String debug = "";
 		try {
 			int n = (Character.toUpperCase (c) - start);
-			Enigma.debug ("disk.chip:" + n);
+			debug += "disk.chip:" + n + '\n';
 			n = n + offset - setting;
 			if (n < 0)
 				n += wiring.length;
 			n %= wiring.length;
 			char d = (char) (encode(n) + start);
-			Enigma.debug (d +"");
+			debug += d +" ";
 			
 			d = (char) (d - offset + setting);
 			if (d < start)
 				d += wiring.length;
 			else if (d >= start + wiring.length)
 				d -= wiring.length;
-			Enigma.debug (d +"");
+			debug += d;
 			
 			return d;
 		} catch (Exception e) {
 			throw new Exception ("Error in disk chip process", e);
+		} finally {
+			Enigma.debug(debug);
 		}
 	}
 	
@@ -76,6 +79,9 @@ public class Disk extends Component {
 		
 	}
 	
+	public char getPosition () {
+		return (char)(offset + start);
+	}
 	public void setPosition ( char c ) throws Exception {
 		
 		try {
@@ -86,10 +92,6 @@ public class Disk extends Component {
 		} catch (Exception e) {
 			throw new Exception ("Error setting disk position", e);
 		}
-	}
-	
-	public char getPosition () {
-		return (char)(offset + start);
 	}
 	
 	public void turn () {

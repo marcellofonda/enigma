@@ -62,6 +62,7 @@ public class Component {
 	public Component ( int n ) {
 		this(n, "NO NAME");
 	}
+	
 	public Component ( Component c ) {
 		this(c.getWiring(), c.max_connections, c.getName());
 	}
@@ -135,7 +136,7 @@ public class Component {
 				ret += 2;
 				used_connections--;
 			}
-			
+			if (n1 == n2) return 0;
 			if (ret == 0 && used_connections == max_connections)
 				return -1;
 			
@@ -167,6 +168,40 @@ public class Component {
 		return false;
 
 	}
+	
+	public String [] getConnections () throws Exception {
+		try {
+			String [] ret = new String [used_connections];
+			
+			if (used_connections == 0) {
+				System.out.println("No connections found");
+				return new String [] {""};
+			}
+			int tracked [] = new int [used_connections];
+			
+			int index = 0;
+			for (int i = 0; i < wiring.length; i++) {
+				if(wiring[i] != i) {
+					
+					boolean already_considered = false;
+					for(int j: tracked)
+						if(i == j) already_considered = true;
+						
+					if(!already_considered) {
+						if(index >= used_connections)
+							throw new IndexOutOfBoundsException ("There are more connections than actually tracked");
+						
+						tracked[index] = wiring[i];
+						ret[index++] = (char)(i + start) + "" + (char)(wiring[i] + start);
+					}
+					
+				}
+			}
+			return ret;
+		} catch (Exception e) {
+			throw new Exception("Error getting connections", e);
+		}
+	}
 
 	public void test () throws Exception {
 		
@@ -187,12 +222,10 @@ public class Component {
 		return start;
 	}
 
-	
 	public void setStart ( char c ) {
 		start = Character.toUpperCase(c);
 	}
 	
-
 	public String getWiring () {
 		String s = "";
 		
@@ -202,8 +235,7 @@ public class Component {
 		
 	}
 
-	/**
-	 * Setter for {@link enigma.Component#wiring}.
+	/**.
 	 * @param wiring the wiring to set.
 	 */
 	public void setWiring( String wiring ) {

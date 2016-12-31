@@ -28,7 +28,7 @@ public class Test {
 			Enigma one = new Enigma (26, alpha_ekw, one_r, one_d, 3, 3, "one");
 			for(String s: one.getDisks())
 				System.out.println(s);
-			Enigma.debugMode = false;
+			Enigma.debugMode = true;
 			
 			one.setReflector(0);
 			one.setWalzenlage("I", "II", "III");
@@ -47,9 +47,12 @@ public class Test {
 			
 			
 			
-			String s = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";//"VUXMTUNECHLLFGNNEPHMDSCAONYCSEJVGRFSGTRHOVLXIBNT";ZGGFNCYYXHQXTIIEXXZMQJWUWOBQCPKJJOIRDHI
+			String s = "HZKPTXPSEHNKGGOZHPWRUJS";//"VUXMTUNECHLLFGNNEPHMDSCAONYCSEJVGRFSGTRHOVLXIBNT";ZGGFNCYYXHQXTIIEXXZMQJWUWOBQCPKJJOIRDHI
+			String enchipered = "";
 			for (int i = 0; i < s.length(); i++)
-				System.out.print(one.chip(s.charAt(i)));
+				enchipered += one.chip(s.charAt(i));
+			
+			System.out.println (enchipered);
 			
 		} catch (Exception e) {
 			

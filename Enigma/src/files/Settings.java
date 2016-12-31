@@ -6,6 +6,9 @@ package files;
 import java.io.*;
 
 import enigma.Enigma;
+import files.Components;
+import files.FileManager;
+import files.Machines;
 
 /**
  * @author Marcello Fonda
@@ -26,7 +29,7 @@ public class Settings extends FileManager {
 	 * @param machines the machines from 
 	 * @param components
 	 * @param setting
-	 * @return the Enigma machine specified in the setting file, set as specified in the file
+	 * @return the Enigma machine specified in the setting files, set as specified in the files
 	 * @throws Exception
 	 */
 	public Enigma loadSetting (Machines machines, Components components, String setting) throws Exception {
@@ -77,21 +80,48 @@ public class Settings extends FileManager {
 		
 	}
 	
-	public void saveCurrentSetting (Enigma enigma, String s) throws Exception {
+	public void saveCurrentSetting (Enigma enigma, String name, boolean overwrite) throws Exception {
 		OutputStream new_setting = null;
 		try {
 			//Check if name is available
-			if (getFile(s) != null) {
+			if (getFile(name) != null) {
 				//TODO delete if necessary
 			}
 			
 			//Define the FileStream where to save the setting
-			new_setting = new FileOutputStream(new File(dir, s));
+			new_setting = new FileOutputStream(new File(dir, name));
 			
+			//Write the machine's name
 			new_setting.write((enigma + "\n\n").getBytes());
+			int n = enigma.getDiskNum();
+			
+			//Write the Walzenlage
+			String [] used_disks = enigma.getWalzenlage();
+			for (int i = n - 1; i > 0; i--) {
+				new_setting.write((used_disks[i] + " ").getBytes());
+			}
+			new_setting.write((used_disks[0] + "\n").getBytes());
+			
+			//Write the reflector
+			new_setting.write((enigma.getUkw() + "\n").getBytes());
+			
+			//Write the ring settings
+			int [] ring_settings = enigma.getRingSetting();
+			for (int i = 0; i < n - 1; i++) {
+				new_setting.write((ring_settings[i] + " ").getBytes());
+			}
+			new_setting.write((ring_settings[n - 1] + "\n").getBytes());
+			
+			//Write the Ringstellung
+			new_setting.write((enigma.getRingstellung() + "\n\n").getBytes());
+			
+			//Write the Steckerverbindungen
+			for(String s: enigma.getSteckerverbindungen()) {
+				new_setting.write((s + "\n").getBytes());
+			}
 			
 		} catch (Exception e) {
-			throw new Exception ("Error while saving setting, name " + s, e);
+			throw new Exception ("Error while saving setting, name " + name, e);
 		} finally {
 			if (new_setting != null)
 				new_setting.close();

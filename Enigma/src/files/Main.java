@@ -6,6 +6,9 @@ package files;
 import java.io.*;
 
 import enigma.Enigma;
+import files.Components;
+import files.Machines;
+import files.Settings;
 
 /**
  * @author Marcello Fonda
@@ -20,6 +23,7 @@ public class Main {
 	public static void main(String[] args) {
 		Enigma.debugMode = false;
 		try {
+			
 			Machines machines = new Machines (path);
 			Settings settings = new Settings (path);
 			Components components = new Components (path);
@@ -32,8 +36,8 @@ public class Main {
 			
 			
 			I = settings.loadSetting(machines, components, "basic");
-			
-			String s = "VUXMTUNECHLLFGNNEPHMDSCAONYCSEJVGRFSGTRHOVLXIBNT";
+			settings.saveCurrentSetting(I, "new", true);
+			String s = "AAA";
 			String enchipered = "";
 			for (int i = 0; i < s.length(); i++)
 				enchipered += I.chip(s.charAt(i));

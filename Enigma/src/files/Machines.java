@@ -3,6 +3,8 @@ package files;
 import java.io.*;
 
 import enigma.*;
+import files.Components;
+import files.FileManager;
 
 /**
  * Handles the various Enigma machines available
@@ -16,9 +18,9 @@ public class Machines extends FileManager {
 	}
 
 	/**
-	 * Builds a new Enigma machine by reading the file specified by {@code machine_name} in the 
+	 * Builds a new Enigma machine by reading the files specified by {@code machine_name} in the 
 	 * directory {@code machines} to retrieve informations on how to do it.
-	 * The file contains the names of the various parts of the machine, which will be used by 
+	 * The files contains the names of the various parts of the machine, which will be used by 
 	 * {@code components} to build them.
 	 * @param machine_name the name of the machine you want to build. Corresponds
 	 * @param components
